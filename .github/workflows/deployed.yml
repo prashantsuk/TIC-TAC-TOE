@@ -9,31 +9,36 @@ jobs:
   build:
     name: Build
     runs-on: [self-hosted]
+
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-          
+          fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'  # Specify the Node.js version you want (you can change this as needed)
-          
+
       - name: Install dependencies (npm)
         run: npm install  # This installs the dependencies listed in package.json
 
-      - name:  trivy file scan
+      - name: Trivy file scan
         run: trivy fs . > trivyfs.txt
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }} 
+          password: ${{ secrets.DOCKERHUB_TOKEN }}   
+
       - name: Docker build and push
-        run: 
-              docker run -t tic-tac-teo
-              docker tage tic-tac-teo prashant680844/tic-tac-teo:latest
-              docker login -u $ {{secret.DOCKER_USERNAME}} -p ${{secret.DOCKER_PASSWORD}}
-              docker push prashant680844/tic-tac-teo:latest
-          env:
-             DOCKER_CLI_ACI:1
-              
+        run: |
+          docker build -t tic-tac-toe .  # Use the correct docker build command
+          docker tag tic-tac-toe prashant680844/tic-tac-toe:latest  # Correct docker tag syntax
+          docker push prashant680844/tic-tac-toe:latest  # Push the Docker image
+        env:
+          DOCKER_CLI_EXPERIMENTAL: 1  # If needed, set specific Docker environment variables
 
       - uses: sonarsource/sonarqube-scan-action@master
         env:
