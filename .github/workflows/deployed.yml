@@ -14,6 +14,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
+          
+      - uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -34,10 +39,20 @@ jobs:
            docker push prashant680844/tic-tac-toe:latest
         env:
          DOCKER_CLI: 1 
+      
+      - name: Pull the Docker image
+        run: docker pull prashant680844/tic-tac-toe:latest
+
+      - name: Trivy image scan 
+        run: trivy image prashant680844/tic-tac-toe:latest
+
+      - name: run docker conatiner
+        run: docker run -d --name ticgame -p 3000:3000 prashant680844/tic-tac-toe:latest 
+
+        
+
+        
 
      
 
-      - uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    
