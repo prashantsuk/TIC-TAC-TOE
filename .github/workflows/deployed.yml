@@ -48,6 +48,11 @@ jobs:
 
       - name: Run Docker container
         run: docker run -d --name ticgame -p 3000:3000 prashant680844/tic-tac-toe:latest
+        
+      - name: Deploy to container
+        run: |
+          docker stop ticgame
+          docker rm ticgame 
 
       - name: Update kubeconfig
         run: aws eks --region ap-south-1 update-kubeconfig --name EKS_CLOUD
