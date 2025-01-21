@@ -25,6 +25,16 @@ jobs:
       - name:  trivy file scan
         run: trivy fs . > trivyfs.txt
 
+      - name: Docker build and push
+        run: 
+              docker run -t tic-tac-teo
+              docker tage tic-tac-teo prashant680844/tic-tac-teo:latest
+              docker login -u $ {{secret.DOCKER_USERNAME}} -p ${{secret.DOCKER_PASSWORD}}
+              docker push prashant680844/tic-tac-teo:latest
+          env:
+             DOCKER_CLI_ACI:1
+              
+
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
