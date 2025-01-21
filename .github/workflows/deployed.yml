@@ -22,6 +22,9 @@ jobs:
       - name: Install dependencies (npm)
         run: npm install  # This installs the dependencies listed in package.json
 
+      - name:  trivy file scan
+        run: trivy fs . > trivyfs.txt
+
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
